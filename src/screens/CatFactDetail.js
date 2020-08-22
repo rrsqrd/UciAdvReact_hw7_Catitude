@@ -30,7 +30,8 @@ import axios from "axios";
 //     "height": 1423
 // }]
 //
-// Note that sometimes a request does not contain anything useful in the breeds array
+// Note that sometimes a request does not contain anything in the breeds array
+// which is ok since this code only uses the url, width, and height...
 //  [{"breeds":[],"id":"a5j",
 //      "url":"https://cdn2.thecatapi.com/images/a5j.jpg",
 //      "width":420,"height":407
@@ -58,35 +59,10 @@ const CatFactDetail = (props) => {
         retrieveCatImageData();
     }, []);
 
-   
-    //-------------------------
-    // Should have a 'real mathematical algorithm' not a stab...
-    //--------------------------
-    function reduceImageDimension(dimension){
-        let newDimension = dimension;
-        if((newDimension > 500) && (newDimension <= 600)){
-            newDimension = newDimension-100;
-        }
-        else if((newDimension > 600) && (newDimension <= 800)){
-            newDimension = newDimension/2;
-        }        
-        else if((newDimension > 800) && (newDimension <= 1200)){
-            newDimension = newDimension/2;
-        }
-        if((newDimension > 1200) && (newDimension <= 1600)){
-            newDimension = (newDimension/2)-200;
-        }
-        else if((newDimension > 1600) && (newDimension <= 2000)){
-            newDimension = (newDimension/3)-100;
-        }
-        else if((newDimension > 2000) && (newDimension <= 2400)){
-            newDimension = (newDimension/4)-100;
-        }
-        return newDimension;
-    }
-
+  
     //--------------------------
     // Send request to the catapi
+    //--------------------------    
     const retrieveCatImageData = async () => {
         try{            
             // works without the key, including it just in case...
@@ -96,11 +72,11 @@ const CatFactDetail = (props) => {
             console.info("\n------CatFactDetail CatApiImageSearch results: " + 
                           JSON.stringify(response.data))
 
-            // let height = response.data[0].height;
-            // let width  = response.data[0].width;
-
-            let height = reduceImageDimension(response.data[0].height);
-            let width  = reduceImageDimension(response.data[0].width);
+            // no need to manually resize the dimensions each image
+            // Shrinking the image proportionally can be done with CSS alone: 
+            // just set its max-width and max-height to 100%.!
+            let height = "100%"
+            let width  = "100%";
 
             //-----------------
             // save the state of imageData

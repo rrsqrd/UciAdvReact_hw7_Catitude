@@ -81,9 +81,9 @@ const Survey = () => {
 
             //----------  
             // -Save react state: ensure object with 3 key/value pairs is intact 
-            //  Otherwise all other values are lost as was the case with my initial submission.
-            // Form does not require all fields to be filled in
-            //  enforcing valid value/check for "undefined"
+            //  Otherwise each of the other values are lost.
+            // -Form does not require all fields to be filled in for submission
+            //  so check for "undefined" and provide alternative.
             //----------
             setSurveyData({
               favoriteName: (typeof surveyData.favoriteName != "undefined") ? surveyData.favoriteName : "", 
@@ -112,8 +112,8 @@ const Survey = () => {
     const clearSurveyData = async () => {
       try {
 
-        // console.info("\n-------------\nsurveyData B4 Clearing: \n" + 
-        const clonedObj = {... surveyData};
+        // console.info("\n-------------\nsurveyData B4 Clearing: \n" 
+        const clonedObj = {... surveyData};  // spread operator...
         console.info(clonedObj);
         // console.info(
         //       "{clonedObj.favoriteName: " + clonedObj.favoriteName + ", " +
@@ -122,11 +122,7 @@ const Survey = () => {
 
           await AsyncStorage.removeItem('CatitudeSurvey8')
           .then(() => {
-              //alert('Catitude Survey data was cleared');
-              console.info('AsyncStorage CatitudeX Survey data was cleared');
-                           
-              // Th bad object resulted in "hooks don't support the second callback" error
-              //setSurveyData({favoriteName: ""}, {buyOrAdopt: "1"}, {likeDogs: "1"});
+              //console.info('AsyncStorage CatitudeX Survey data was cleared');                          
 
               setSurveyData({favoriteName: "", buyOrAdopt: "1", likeDogs: "1"});
               alert("Survey Data cleared!")
@@ -136,36 +132,39 @@ const Survey = () => {
       }      
     }
 
-    const getAllAsyncStorageKeys = async () => {
-          console.info("\n------ Retreiving ALL AsyncStorage keys\n");
-          AsyncStorage.getAllKeys((err, keys) => {
-            console.info("err1=" + err);
-          AsyncStorage.multiGet(keys, (err, stores) => {
-            console.info("err2=" + err);
-            stores.map((result, i, store) => {
-              // get at each store's key/value so you can work with it
-              let key = store[i][0];
-              let value = store[i][1];
+    //------------------------------
+    // Consider moving these to a /utils/utilities file...
+    //
+    // const getAllAsyncStorageKeys = async () => {
+    //       console.info("\n------ Retreiving ALL AsyncStorage keys\n");
+    //       AsyncStorage.getAllKeys((err, keys) => {
+    //         console.info("err1=" + err);
+    //       AsyncStorage.multiGet(keys, (err, stores) => {
+    //         console.info("err2=" + err);
+    //         stores.map((result, i, store) => {
+    //           // get at each store's key/value so you can work with it
+    //           let key = store[i][0];
+    //           let value = store[i][1];
+    //
+    //           console.info("key=" + key);
+    //           console.info("value=" + value);
+    //         });
+    //       });
+    //     });
+    // }
 
-              console.info("key=" + key);
-              console.info("value=" + value);
-            });
-          });
-        });
-    }
-
-    const removeAsyncStorageKeys = async () => {
-      console.info("\n------ Removing AsyncStorage keys\n");
-      // let keys = ['CatitudeSurvey2', 'CatitudeSurvey3', 'CatitudeSurvey4', 
-      //             'CatitudeSurvey5', 'CatitudeSurvey6', 'CatitudeSurvey7'];
-      let keys = ['CatitudeSurvey2', 'CatitudeSurvey3', 'CatitudeSurvey4'];
-      
-      await AsyncStorage.multiRemove(keys, (err) => {
-        console.info("removeKey: err:"  + err)
-        // keys removed, if they existed
-        // do most stuff after removal (if you want)
-      });
-    }
+    // const removeAsyncStorageKeys = async () => {
+    //   console.info("\n------ Removing AsyncStorage keys\n");
+    //   // let keys = ['CatitudeSurvey2', 'CatitudeSurvey3', 'CatitudeSurvey4', 
+    //   //             'CatitudeSurvey5', 'CatitudeSurvey6', 'CatitudeSurvey7'];
+    //   let keys = ['CatitudeSurvey2', 'CatitudeSurvey3', 'CatitudeSurvey4'];
+    //  
+    //   await AsyncStorage.multiRemove(keys, (err) => {
+    //     console.info("removeKey: err:"  + err)
+    //     // keys removed, if they existed
+    //     // do most stuff after removal (if you want)
+    //   });
+    // }
 
     function handleTextFieldChange(value) {
         setSurveyData({
@@ -223,9 +222,7 @@ const Survey = () => {
                   default=""
                   placeholder="Favorite Cat Name"
                   value={surveyData.favoriteName}
-                  //onChangeText={(value) => setSurveyData({favoriteName: value})}
                   onChangeText={(value) => handleTextFieldChange(value)}                  
-
                   returnKeyType="done"
                 />
                 <WhiteSpaceLineSeparator height={10}/>
@@ -235,7 +232,6 @@ const Survey = () => {
                 <Picker                  
                   style={{height: 30, width: 300, borderColor: 'blue', borderWidth: 1}}
                   selectedValue={surveyData.buyOrAdopt}
-                  //onValueChange={(itemValue, itemPosition) => setSurveyData({buyOrAdopt: itemValue})}
                   onValueChange={(selectedValue) => handlePickerChange("buyOrAdopt", selectedValue)}
                   >
                   <Picker.Item label="(none)"                       value="1" />
@@ -251,7 +247,6 @@ const Survey = () => {
                 <Picker
                   style={{height: 30, width: 300, borderColor: 'blue', borderWidth: 1}}
                   selectedValue={surveyData.likeDogs}
-                  //onValueChange={(selectedValue) => setSurveyData({likeDogs: selectedValue})}
                   onValueChange={(selectedValue) => handlePickerChange("likeDogs", selectedValue)}
                   >
                   <Picker.Item label="(none)"                   value="1" />
